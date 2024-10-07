@@ -6,8 +6,6 @@ async function main() {
   try {
     //connect to the mongoDB custer
     await client.connect();
-    //make db interaction
-    // await listDatabases(client);
     // create a single user
     await createUser(client, {
       name: "Alice3",
