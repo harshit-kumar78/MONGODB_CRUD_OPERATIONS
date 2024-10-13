@@ -8,7 +8,7 @@ async function main() {
     //connect to the mongoDB custer
     await client.connect();
 
-    await updateAllUsersToHaveRollNumber(client);
+    await deleteCommentsByBeforeDate(client, "26-11-22");
   } catch (err) {
     console.log(err);
   } finally {
@@ -152,4 +152,28 @@ async function updateAllUsersToHaveRollNumber(client) {
     );
   console.log(`${result.matchedCount} document(s) matched the query criteria.`);
   console.log(`${result.modifiedCount} document(s) was/were updated.`);
+}
+
+async function deleteUserByName(client, userName) {
+  const result = await client
+    .db("sample_mflix")
+    .collection("users")
+    .deleteOne({ name: userName });
+
+  console.log(`${result.deletedCount} document(s) was/were deleted.`);
+}
+
+async function deleteCommentsByBeforeDate(client, date) {
+  const parts = date.split("-");
+
+  const formattedDate = new Date(
+    `${parts[2]}-${parts[1]}-${parts[0]}T00:00:00Z`
+  );
+
+  const result = await client
+    .db("sample_mflix")
+    .collection("comments")
+    .deleteMany({ date: { $lte: formattedDate } });
+
+  console.log(result);
 }
