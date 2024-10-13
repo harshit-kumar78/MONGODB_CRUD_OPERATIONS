@@ -8,11 +8,15 @@ async function main() {
     //connect to the mongoDB custer
     await client.connect();
     // read one user
-    // await findOneUserByName(client, (userName = ""));
-    await findMinimumRuntimeYearAndMostRecentRelease(client, {
-      minimumRuntime: 10,
-      minimumYear: 2000,
+    console.log("before update");
+    await findOneUserByName(client, (userName = "aaadda"));
+
+    await upsertListingByName(client, "aaadda", {
+      email: "3343@gmail.com",
     });
+
+    console.log("after update");
+    await findOneUserByName(client, (userName = "aaadda"));
   } catch (err) {
     console.log(err);
   } finally {
@@ -78,6 +82,7 @@ async function findOneUserByName(client, userName) {
   }
 }
 
+//find movies based on some condition
 async function findMinimumRuntimeYearAndMostRecentRelease(
   client,
   {
@@ -116,5 +121,31 @@ async function findMinimumRuntimeYearAndMostRecentRelease(
     console.log(
       `No movies found with at least ${minimumRuntime} bedrooms and ${minimumYear} bathrooms`
     );
+  }
+}
+
+//update used based on name
+async function updateUserByName(client, nameOfUser, updateUser) {
+  const result = await client
+    .db("sample_mflix")
+    .collection("users")
+    .updateOne({ name: nameOfUser }, { $set: updateUser });
+  console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+  console.log(`${result.modifiedCount} document(s) was/were updated.`);
+}
+
+//upsert user by name
+async function upsertListingByName(client, nameOfUser, updateUser) {
+  const result = await client
+    .db("sample_mflix")
+    .collection("users")
+    .updateOne({ name: nameOfUser }, { $set: updateUser }, { upsert: true });
+  console.log(result);
+  console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+
+  if (result.upsertedCount > 0) {
+    console.log(`One document was inserted with the id ${result.upsertedId}`);
+  } else {
+    console.log(`${result.modifiedCount} document(s) was/were updated.`);
   }
 }
