@@ -7,16 +7,8 @@ async function main() {
   try {
     //connect to the mongoDB custer
     await client.connect();
-    // read one user
-    console.log("before update");
-    await findOneUserByName(client, (userName = "aaadda"));
 
-    await upsertListingByName(client, "aaadda", {
-      email: "3343@gmail.com",
-    });
-
-    console.log("after update");
-    await findOneUserByName(client, (userName = "aaadda"));
+    await updateAllUsersToHaveRollNumber(client);
   } catch (err) {
     console.log(err);
   } finally {
@@ -148,4 +140,16 @@ async function upsertListingByName(client, nameOfUser, updateUser) {
   } else {
     console.log(`${result.modifiedCount} document(s) was/were updated.`);
   }
+}
+
+async function updateAllUsersToHaveRollNumber(client) {
+  const result = await client
+    .db("sample_mflix")
+    .collection("users")
+    .updateMany(
+      { rollNumber: { $exists: false } },
+      { $set: { rollNumber: "Unknown" } }
+    );
+  console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+  console.log(`${result.modifiedCount} document(s) was/were updated.`);
 }
