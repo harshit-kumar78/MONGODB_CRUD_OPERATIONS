@@ -141,7 +141,7 @@ async function upsertListingByName(client, nameOfUser, updateUser) {
     console.log(`${result.modifiedCount} document(s) was/were updated.`);
   }
 }
-
+//update all
 async function updateAllUsersToHaveRollNumber(client) {
   const result = await client
     .db("sample_mflix")
@@ -153,7 +153,7 @@ async function updateAllUsersToHaveRollNumber(client) {
   console.log(`${result.matchedCount} document(s) matched the query criteria.`);
   console.log(`${result.modifiedCount} document(s) was/were updated.`);
 }
-
+//delete based on username
 async function deleteUserByName(client, userName) {
   const result = await client
     .db("sample_mflix")
@@ -162,7 +162,7 @@ async function deleteUserByName(client, userName) {
 
   console.log(`${result.deletedCount} document(s) was/were deleted.`);
 }
-
+// delete based on date
 async function deleteCommentsByBeforeDate(client, date) {
   const parts = date.split("-");
 
